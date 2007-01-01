@@ -101,7 +101,7 @@ function CTBL_DrawRectDispText(x,y,w,h,color)
   end
   ]]--
   
-  screen.fillRect(x, y, w, h, 1, color)
+  lcd.rect(x, y, w, h, 1, color)
 end
 
 function CTBL_DrawRect(x,y,w,h,color)
@@ -612,9 +612,13 @@ local xBck,yBck = 0,0
 
 
 function OnPaint(w,h)
+lcd.blitt(0)
+
 
 if ( _async_in_paint or _async_in_step ) then
 --if _async_in_paint then
+
+lcd.blitt(2)
   return
 end
 
@@ -662,6 +666,9 @@ CTBL_DrawRect(0, 0, ScreenWidth, ScreenHeight, _BLACK) -- Background is black
   dispText(CenterX, y, "LEVEL:"..tostring(gGame.level), ppc)
   
 _async_in_paint = false
+  
+  
+  lcd.blitt(2)
   
 end
 

@@ -8,7 +8,7 @@ Re-designed to use Xts-uBASIC Pocket v3 GPU on an Acme Arietta G25 ARM board
 
 
 
-
+small video on https://youtu.be/moDQHPUNA-I
 
 
 

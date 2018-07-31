@@ -9,8 +9,10 @@
 
 -- ////////////////////////////////////////
 
-ScreenWidth = 240
-ScreenHeight = 320
+SCREEN_HEIGHT = 240
+SCREEN_WIDTH = 320
+_GLOBAL_isPC = false
+
 ScreenHeight = SCREEN_HEIGHT
 ScreenWidth = SCREEN_WIDTH
 
@@ -50,16 +52,17 @@ end
 -- ////////////////////////////////////////
 
 function CTBL_Invalidate()
-  screen:flip()
+  --screen:flip()
   
   OnPaint(ScreenWidth,ScreenHeight)
   --local _status, _err = pcall(function ()  OnPaint(ScreenWidth,ScreenHeight)  ; end)
   
   if ( not _GLOBAL_isPC ) then
-    screen:waitVblankStart()
+    --screen:waitVblankStart()
   end
 end
 
+--[[
 --gColors = { 0xFFFFFF, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF00FF, 0x00FFFF, 0xFFFF00 }
 gColors = { Color.new( 0xFF, 0xFF, 0xFF ), -- 1 white
             Color.new( 0xFF, 0x00, 0x00 ), -- 2 red
@@ -69,7 +72,9 @@ gColors = { Color.new( 0xFF, 0xFF, 0xFF ), -- 1 white
             Color.new( 0x00, 0xFF, 0xFF ), -- 6 cyan
             Color.new( 0xFF, 0xFF, 0x00 )  -- 7 yellow
              }
+]]--
 
+--[[
 imgPath = "./imgs/"
 borderImgPath = imgPath.."border.png"
 borderImg = Image.load( borderImgPath )
@@ -85,19 +90,22 @@ bulletGreenImg = Image.load( imgPath.."bulett_green.png" )
 bulletPinkImg = Image.load( imgPath.."bulett_pink.png" )
 bulletCyanImg = Image.load( imgPath.."bulett_cyan.png" )
 bulletYellowImg = Image.load( imgPath.."bulett_yellow.png" )
-
+]]
 
 function CTBL_DrawRectDispText(x,y,w,h,color)
-  if ( color == _WHITE ) then
+  --[[ if ( color == _WHITE ) then
     --screen:blit( x,y, bulletTextImg, 0, 0, BlockSize, BlockSize, false )
     screen:blit( x,y, bulletTextImg, 0, 0, w, h, false )
   else
     screen:fillRect(x, y, w, h, color)
   end
+  ]]--
+  
+  screen.fillRect(x, y, w, h, 1, color)
 end
 
 function CTBL_DrawRect(x,y,w,h,color)
-
+--[[
   if ( color == BorderColor ) then
     --screen:blit( x,y, borderImg, 0, 0, BlockSize, BlockSize, false )
     screen:blit( x,y, borderImg, 0, 0, w, h, false )
@@ -120,12 +128,19 @@ function CTBL_DrawRect(x,y,w,h,color)
   end
 
   --screen:fillRect(x, y, w, h, color)
+  ]]--
+  
+  lcd.rect(x, y, w, h, 1, color)
 end
 
-
+--[[
 _RED = Color.new(255, 0, 0)
 _WHITE = Color.new(255, 255, 255)
 _BLACK = Color.new(0, 0, 0)
+]]--
+_RED = 8
+_WHITE = 1
+_BLACK = 0
 
 -- ////////////////////////////////////////
 -- ////////////////////////////////////////
@@ -183,7 +198,8 @@ gAllPieces = {
 -- Colors
 -- in RGB format each component over 8 bits
 --BorderColor = 0x0077A0
-BorderColor = Color.new( 0x00, 0x77, 0xA0 )
+--BorderColor = Color.new( 0x00, 0x77, 0xA0 )
+BorderColor = 9 -- light blue
 
 
 
@@ -297,7 +313,9 @@ local i
     local xp = rCases[i][1] + 2
     local yp = rCases[i][2] + 2
     --CTBL:DrawRect(x+xp*BlockSize, y+yp*BlockSize, BlockSize, BlockSize, gColors[self.ptype])
-    CTBL_DrawRect(x+xp*BlockSize, y+yp*BlockSize, BlockSize, BlockSize, gColors[self.ptype])
+    --CTBL_DrawRect(x+xp*BlockSize, y+yp*BlockSize, BlockSize, BlockSize, gColors[self.ptype])
+    
+    CTBL_DrawRect(x+xp*BlockSize, y+yp*BlockSize, BlockSize, BlockSize, self.ptype)
   end
 end
 
@@ -337,7 +355,9 @@ function CBoard_mt.disp(self, x, y)
     for i=1,self.w do
       if self.cases[i][j] ~= 0 then
         --CTBL:DrawRect(x+i*BlockSize, y+j*BlockSize, BlockSize, BlockSize, gColors[self.cases[i][j]])
-        CTBL_DrawRect(x+i*BlockSize, y+j*BlockSize, BlockSize, BlockSize, gColors[self.cases[i][j]])
+        --CTBL_DrawRect(x+i*BlockSize, y+j*BlockSize, BlockSize, BlockSize, gColors[self.cases[i][j]])
+        
+        CTBL_DrawRect(x+i*BlockSize, y+j*BlockSize, BlockSize, BlockSize, self.cases[i][j] )
       end
     end
   end
@@ -609,12 +629,16 @@ _async_in_paint = true
   CenterY = math.floor(ScreenHeight - BlockSize*22)/2
   
 -- .............
+--[[
 if ( backgroundBmp == nil ) then
   --CTBL:DrawRect(0, 0, ScreenWidth, ScreenHeight, 0x000000) -- Background is black
   CTBL_DrawRect(0, 0, ScreenWidth, ScreenHeight, _BLACK) -- Background is black
 else
   screen:blit( xBck,yBck, backgroundBmp )
 end
+]]--
+
+CTBL_DrawRect(0, 0, ScreenWidth, ScreenHeight, _BLACK) -- Background is black
 -- .............
   
   gGame.board:disp(CenterX+4*BlockSize, CenterY)
@@ -763,16 +787,135 @@ function __print(str)
   __i = __i + 1
 end
 
+
+--[[
+
+
+package com.xtase.lua.hardware.object;
+
+public class LuaTimer {
+    long start = 0L;
+    static long consoleStartTime = -1L;
+
+    static {
+        consoleStartTime = now();
+    }
+
+    public LuaTimer() {
+    }
+
+    public void reset() {
+        consoleStartTime = now();
+    }
+
+    public void reset(int ignored) {
+        consoleStartTime = now();
+    }
+
+    public void start() {
+        this.start = now();
+    }
+
+    public long time() {
+        return now() - consoleStartTime;
+    }
+
+    static long now() {
+        return System.currentTimeMillis();
+    }
+}
+
+
+]]--
+
+Timer = {
+
+  now = function()
+    return os.clock()
+  end,
+  
+  _start=0,
+  consoleStartTime = os.clock(),
+  
+  reset = function()
+    consoleStartTime = os.clock()
+  end,
+  
+  --start = function()
+  --  _start = os.clock()
+  --end,
+  
+  --time = function()
+  --  return os.clock() - consoleStartTime
+  --end,
+  
+  -- =====================
+  new = function() 
+    return self
+  end
+
+}
+
+function Timer:start()
+  self._start = os.clock()
+end
+
+function Timer:time()
+  return os.clock() - self.consoleStartTime
+end
+
+
+
+_Controller = {
+  cross = function()
+    return false
+  end,
+  triangle = function()
+    return false
+  end,
+  square = function()
+    return false
+  end,
+  circle = function()
+    return false
+  end,
+  up = function()
+    return false
+  end,
+  down = function()
+    return false
+  end,
+  left = function()
+    return false
+  end,
+  right = function()
+    return false
+  end
+}
+
+
+Controls = {
+  read = function()
+    return _Controller
+  end
+}
+
 -- ////////////////////////////////////////
-screen:clear()
+-- screen:clear()
+lcd.cls()
 
 oldPad = Controls.read()
 
-padTimer = Timer.new();
+-- padTimer = Timer.new();
+padTimer = Timer
+
 padTimerTime = 0
 padTimer:start()
 
-ontimeoutTimer = Timer.new();
+-- ontimeoutTimer = Timer.new();
+ontimeoutTimer = Timer;
+
+
 ontimeoutTimerTime = 0
 if ( not _GLOBAL_isPC ) then
   ontimeoutTimer:start()

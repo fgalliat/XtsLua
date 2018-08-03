@@ -1,0 +1,1 @@
+g++ -o lcdprint lcdprint.cpp Serial.cpp BridgedScreen.cpp
